@@ -2,9 +2,9 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 
 from animals import get_all_animals, get_single_animal, create_animal
-from locations import get_all_locations, get_single_location
-from employees import get_all_employees, get_single_employee
-from customers import get_all_customers, get_single_customer
+from locations import get_all_locations, get_single_location, create_location
+from employees import get_all_employees, get_single_employee, create_employee
+from customers import get_all_customers, get_single_customer, create_customer
 
 
 # Here's a class. It inherits from another class.
@@ -76,18 +76,25 @@ class HandleRequests(BaseHTTPRequestHandler):
         # Convert JSON string to a Python dictionary
         post_body = json.loads(post_body)
 
-        # Parse the URL
+        # Parse URL
         (resource, id) = self.parse_url(self.path)
 
         # Initialize new animal
         new_animal = None
 
         # Add a new animal to the list.
-        if resource == "animals":
-            new_animal = create_animal(post_body)
+        select_create_obj = {
+            "animals": create_animal,
+            "locations": create_location,
+            "employees": create_employee,
+            "customers": create_customer
+        }
 
-        # Encode the new animal and send in response
-        self.wfile.write(f"{new_animal}".encode())
+        func = select_create_obj[resource]
+        new_object = func(post_body)
+
+        # Encode the new object and send in response
+        self.wfile.write(f"{new_object}".encode())
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any PUT request.
