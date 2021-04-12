@@ -1,6 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-from animals import get_all_animals
+from animals import get_all_animals, get_single_animal
 from locations import get_all_locations
 from employees import get_all_employees
 
@@ -34,23 +34,30 @@ class HandleRequests(BaseHTTPRequestHandler):
     def do_GET(self):
         # Set the response code to 'Ok'
         self._set_headers(200)
+        response = {}  # Default response
 
-        # Your new console.log() that outputs to the terminal
-        print(self.path)
+        # Parse the URL and capture the tuple that is returned
+        (resource, id) = self.parse_url(self.path)
 
-        request_without_id = {
-            "/animals": get_all_animals,
-            "/locations": get_all_locations,
-            "/employees": get_all_employees
+        request_with_id = {
+            "animals": get_single_animal
         }
 
-        if(self.path in request_without_id):
-            response = request_without_id[self.path]()
-        else:
-            response = []
+        request_without_id = {
+            "animals": get_all_animals,
+            "locations": get_all_locations,
+            "employees": get_all_employees
+        }
 
-        # Send a response back to the client
-        self.wfile.write(f"{response}".encode())
+        # .encode requires responses be string
+        if id is not None:
+            func = request_with_id[resource]
+            response = str(func(id))
+
+        else:
+            response = str(request_without_id[resource]())
+
+        self.wfile.write(response.encode())
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any POST request.
@@ -65,9 +72,24 @@ class HandleRequests(BaseHTTPRequestHandler):
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any PUT request.
-
     def do_PUT(self):
         self.do_POST()
+
+    def parse_url(self, path):
+        path_params = path.split("/")
+        resource = path_params[1]
+        id = None
+
+        # get the item at index 2
+        try:
+            # use like parseInt()
+            id = int(path_params[2])
+        except IndexError:
+            pass  # No route parameter exists: /animals
+        except ValueError:
+            pass  # Request had trailing slash: /animals/
+
+        return (resource, id)
 
 
 # This function is not inside the class. It is the starting
