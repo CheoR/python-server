@@ -1,5 +1,8 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+
 from animals import get_all_animals
+from locations import get_all_locations
+from employees import get_all_employees
 
 
 # Here's a class. It inherits from another class.
@@ -35,8 +38,14 @@ class HandleRequests(BaseHTTPRequestHandler):
         # Your new console.log() that outputs to the terminal
         print(self.path)
 
-        if self.path == "/animals":
-            response = get_all_animals()
+        request_without_id = {
+            "/animals": get_all_animals,
+            "/locations": get_all_locations,
+            "/employees": get_all_employees
+        }
+
+        if(self.path in request_without_id):
+            response = request_without_id[self.path]()
         else:
             response = []
 
