@@ -4,49 +4,64 @@ ANIMALS = [
         "name": "Peggy",
         "breed": "Pug",
         "customerId": 1,
-        "locationId": 2
+        "locationId": 2,
+        "status": "Admitted"
     },
     {
         "id": 2,
         "name": "Snippet",
         "breed": "Daschund",
         "customerId": 2,
-        "locationId": 3
+        "locationId": 3,
+        "status": "Admitted"
     },
     {
         "id": 3,
         "name": "Burrito",
         "breed": "Bulldog",
         "customerId": 3,
-        "locationId": 4
+        "locationId": 4,
+        "status": "Admitted"
     },
     {
         "id": 4,
         "name": "Bark",
         "breed": "Golden Retriever",
         "customerId": 4,
-        "locationId": 5
+        "locationId": 5,
+        "status": "Admitted"
     },
     {
         "id": 5,
         "name": "Gif",
         "breed": "Labador",
         "customerId": 5,
-        "locationId": 6
+        "locationId": 6,
+        "status": "Admitted"
     },
     {
         "id": 6,
         "name": "Bixo do Coco",
         "breed": "Chihuahua",
         "customerId": 1,
-        "locationId": 2
+        "locationId": 2,
+        "status": "Admitted"
     },
     {
         "name": "Pal",
         "breed": "Vicious teddy bear killer",
         "locationId": 3,
         "customerId": 2,
-        "id": 7
+        "id": 7,
+        "status": "Admitted"
+    },
+    {
+        "name": "TEST SUBJECT",
+        "breed": "TEST BREED",
+        "locationId": 3,
+        "customerId": 2,
+        "id": 8,
+        "status": "Admitted"
     }
 ]
 
@@ -97,3 +112,14 @@ def delete_animal(id):
     # If the animal was found, use pop(int) to remove it from list
     if animal_index >= 0:
         ANIMALS.pop(animal_index)
+
+
+def update_animal(id, new_animal):
+    # new animal - replacing entire object with user-given object
+    # from Postman
+    # Iterate ANIMALS list with enumerate()
+    for index, animal in enumerate(ANIMALS):
+        if animal["id"] == id:
+            # Found the animal. Update the value.
+            ANIMALS[index] = new_animal
+            break
