@@ -54,14 +54,6 @@ ANIMALS = [
         "customerId": 2,
         "id": 7,
         "status": "Admitted"
-    },
-    {
-        "name": "TEST SUBJECT",
-        "breed": "TEST BREED",
-        "locationId": 3,
-        "customerId": 2,
-        "id": 8,
-        "status": "Admitted"
     }
 ]
 

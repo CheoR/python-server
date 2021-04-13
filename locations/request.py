@@ -2,42 +2,50 @@ LOCATIONS = [
     {
         "id": 1,
         "name": "Nashville North",
-        "address": "8422 E Johnson Pike"
+        "address": "8422 E Johnson Pike",
+        "status": "Add status"
     },
     {
         "id": 2,
         "name": "Nashville South",
-        "address": "209 W Emory Drive"
+        "address": "209 W Emory Drive",
+        "status": "Add status"
     },
     {
         "id": 3,
         "name": "Nashville East",
-        "address": "8422 N Johnson Pike"
+        "address": "8422 N Johnson Pike",
+        "status": "Add status"
     },
     {
         "id": 4,
         "name": "Nashville West",
-        "address": "209 S Emory Drive"
+        "address": "209 S Emory Drive",
+        "status": "Add status"
     },
     {
         "id": 5,
         "name": "Nashville North",
-        "address": "8422 N Johnson Pike"
+        "address": "8422 N Johnson Pike",
+        "status": "Add status"
     },
     {
         "id": 6,
         "name": "Nashville South",
-        "address": "209 S Emory Drive"
+        "address": "209 S Emory Drive",
+        "status": "Add status"
     },
     {
         "name": "testloc1",
         "address": "123 fake street, nashville tn",
-        "id": 7
+        "id": 7,
+        "status": "Add status"
     },
     {
         "name": "delete this location",
         "address": "location to delte",
-        "id": 8
+        "id": 8,
+        "status": "Add status"
     }
 ]
 
@@ -92,3 +100,14 @@ def delete_location(id):
     # If the location was found, use pop(int) to remove it from list
     if location_index >= 0:
         LOCATIONS.pop(location_index)
+
+
+def update_location(id, new_location):
+    # new location - replacing entire object with user-given object
+    # from Postman
+    # Iterate locationS list with enumerate()
+    for index, location in enumerate(LOCATIONS):
+        if location["id"] == id:
+            # Found the location. Update the value.
+            LOCATIONS[index] = new_location
+            break

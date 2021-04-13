@@ -3,49 +3,57 @@ EMPLOYEES = [
         "id": 1,
         "name": "Peggy",
         "job": "Professional Dog Snuggles",
-        "locationId": 1
+        "locationId": 1,
+        "status": "Add status"
     },
     {
         "id": 2,
         "name": "Cat Lady",
         "job": "Picks up cat poop",
-        "locationId": 1
+        "locationId": 1,
+        "status": "Add status"
     },
     {
         "id": 3,
         "name": "Mage",
         "job": "Eats poop",
-        "locationId": 2
+        "locationId": 2,
+        "status": "Add status"
     },
     {
         "id": 4,
         "name": "Hobo Jack",
         "job": "Doesn't actually work here, just hangs out here.",
-        "locationId": 2
+        "locationId": 2,
+        "status": "Add status"
     },
     {
         "id": 5,
         "name": "Drifter Jeff",
         "job": "Hobo Jack's friend",
-        "locationId": 3
+        "locationId": 3,
+        "status": "Add status"
     },
     {
         "id": 6,
         "name": "Charlie",
         "job": "Horse without a liver.",
-        "locationId": 3
+        "locationId": 3,
+        "status": "Add status"
     },
     {
         "name": "Sunny",
         "job": "Ray Of Happiness",
         "locationId": 2,
-        "id": 7
+        "id": 7,
+        "status": "Add status"
     },
     {
         "name": "mr delete",
         "job": "deleting stuff",
         "locationId": 2,
-        "id": 8
+        "id": 8,
+        "status": "Add status"
     }
 ]
 
@@ -101,3 +109,14 @@ def delete_employee(id):
     # If the employee was found, use pop(int) to remove it from list
     if employee_index >= 0:
         EMPLOYEES.pop(employee_index)
+
+
+def update_employee(id, new_employee):
+    # new employee - replacing entire object with user-given object
+    # from Postman
+    # Iterate employeeS list with enumerate()
+    for index, employee in enumerate(EMPLOYEES):
+        if employee["id"] == id:
+            # Found the employee. Update the value.
+            EMPLOYEES[index] = new_employee
+            break
