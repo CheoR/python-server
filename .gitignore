@@ -389,6 +389,7 @@ __pycache__
 *.xap
 # *.jpeg
 *.xml
+*.db
 
 # virtualenv directory
 ## e.g. venv_django_react_configure
