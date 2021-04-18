@@ -9,8 +9,10 @@ class Customer():
     #     "status": "Add status"
     # }
 
-    def __init__(self, id, name, email, status):
+    def __init__(self, id, name, address, email, password):  # , status):
         self.id = id
         self.name = name
+        self.address = address
         self.email = email
-        self.status = status
+        self.password = password
+        # self.status = status

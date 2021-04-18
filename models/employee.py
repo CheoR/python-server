@@ -10,9 +10,15 @@ class Employee():
     #     "status": "Add status"
     # }
 
-    def __init__(self, id, name, job, location_id, status):
+    # def __init__(self, id, name, job, location_id, status):
+    #     self.id = id
+    #     self.name = name
+    #     self.job = job
+    #     self.status = status
+    #     self.location_id = location_id
+
+    def __init__(self, id, name, address, location_id):
         self.id = id
         self.name = name
-        self.job = job
-        self.status = status
+        self.address = address
         self.location_id = location_id
