@@ -10,7 +10,7 @@ class Animal():
     #     "locationId": 4,
     #     "status": "Admitted"
     # }
-    def __init__(self, id, name, breed, status, location_id, customer_id):
+    def __init__(self, id, name, breed, status, customer_id, location_id=""):
         self.id = id
         self.name = name
         self.breed = breed

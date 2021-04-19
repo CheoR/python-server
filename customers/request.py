@@ -4,69 +4,69 @@ import json
 from models import Customer
 
 
-CUSTOMERS = [
-    {
-        "id": 7,
-        "name": "Hannah Hall",
-        "address": "7002 Chestnut Ct",
-        "email": "hannah.hall@gmail.com",
-        "status": "Add status"
-    },
-    {
-        "id": 1,
-        "name": "Customer 1",
-        "address": "123 W Fake St",
-        "email": "customer1@gmail.com",
-        "status": "Add status"
-    },
-    {
-        "id": 2,
-        "name": "Customer 2",
-        "address": "456 Also Fake Rd.",
-        "email": "customer2@gmail.com",
-        "status": "Add status"
-    },
-    {
-        "id": 3,
-        "name": "Customer 3",
-        "address": "789 Fake Way",
-        "email": "customer3@gmail.com",
-        "status": "Add status"
-    },
-    {
-        "id": 4,
-        "name": "Customer 4",
-        "address": "1234 Fake Blvd",
-        "email": "customer4@gmail.com",
-        "status": "Add status"
-    },
-    {
-        "id": 5,
-        "name": "Customer 5",
-        "address": "5678 Fake Ct",
-        "email": "customer5@gmail.com",
-        "status": "Add status"
-    },
-    {
-        "id": 6,
-        "name": "Customer 6",
-        "address": "123 E Fake St",
-        "email": "customer6@gmail.com",
-        "status": "Add status"
-    },
-    {
-        "email": "test.name@gmail.com",
-        "name": "test name",
-        "id": 8,
-        "status": "Add status"
-    },
-    {
-        "email": "test@test.com",
-        "name": "test test",
-        "id": 9,
-        "status": "Add status"
-    }
-]
+# CUSTOMERS = [
+#     {
+#         "id": 7,
+#         "name": "Hannah Hall",
+#         "address": "7002 Chestnut Ct",
+#         "email": "hannah.hall@gmail.com",
+#         "status": "Add status"
+#     },
+#     {
+#         "id": 1,
+#         "name": "Customer 1",
+#         "address": "123 W Fake St",
+#         "email": "customer1@gmail.com",
+#         "status": "Add status"
+#     },
+#     {
+#         "id": 2,
+#         "name": "Customer 2",
+#         "address": "456 Also Fake Rd.",
+#         "email": "customer2@gmail.com",
+#         "status": "Add status"
+#     },
+#     {
+#         "id": 3,
+#         "name": "Customer 3",
+#         "address": "789 Fake Way",
+#         "email": "customer3@gmail.com",
+#         "status": "Add status"
+#     },
+#     {
+#         "id": 4,
+#         "name": "Customer 4",
+#         "address": "1234 Fake Blvd",
+#         "email": "customer4@gmail.com",
+#         "status": "Add status"
+#     },
+#     {
+#         "id": 5,
+#         "name": "Customer 5",
+#         "address": "5678 Fake Ct",
+#         "email": "customer5@gmail.com",
+#         "status": "Add status"
+#     },
+#     {
+#         "id": 6,
+#         "name": "Customer 6",
+#         "address": "123 E Fake St",
+#         "email": "customer6@gmail.com",
+#         "status": "Add status"
+#     },
+#     {
+#         "email": "test.name@gmail.com",
+#         "name": "test name",
+#         "id": 8,
+#         "status": "Add status"
+#     },
+#     {
+#         "email": "test@test.com",
+#         "name": "test test",
+#         "id": 9,
+#         "status": "Add status"
+#     }
+# ]
 
 
 # def get_all_customers():
@@ -217,9 +217,7 @@ def get_customers_by_email(email):
         select
             c.id,
             c.name,
-            c.address,
-            c.email,
-            c.password
+            c.address
         from customer c
         WHERE c.email = ?
         """, (email, ))
@@ -229,7 +227,7 @@ def get_customers_by_email(email):
 
         for row in dataset:
             customer = Customer(
-                row['id'], row['name'], row['address'], row['email'], row['password'])
+                row['id'], row['name'], row['address'])
             customers.append(customer.__dict__)
 
     return json.dumps(customers)

@@ -4,64 +4,64 @@ import json
 from models import Animal
 
 
-ANIMALS = [
-    {
-        "id": 1,
-        "name": "Peggy",
-        "breed": "Pug",
-        "customerId": 1,
-        "locationId": 2,
-        "status": "Admitted"
-    },
-    {
-        "id": 2,
-        "name": "Snippet",
-        "breed": "Daschund",
-        "customerId": 2,
-        "locationId": 3,
-        "status": "Admitted"
-    },
-    {
-        "id": 3,
-        "name": "Burrito",
-        "breed": "Bulldog",
-        "customerId": 3,
-        "locationId": 4,
-        "status": "Admitted"
-    },
-    {
-        "id": 4,
-        "name": "Bark",
-        "breed": "Golden Retriever",
-        "customerId": 4,
-        "locationId": 5,
-        "status": "Admitted"
-    },
-    {
-        "id": 5,
-        "name": "Gif",
-        "breed": "Labador",
-        "customerId": 5,
-        "locationId": 6,
-        "status": "Admitted"
-    },
-    {
-        "id": 6,
-        "name": "Bixo do Coco",
-        "breed": "Chihuahua",
-        "customerId": 1,
-        "locationId": 2,
-        "status": "Admitted"
-    },
-    {
-        "name": "Pal",
-        "breed": "Vicious teddy bear killer",
-        "locationId": 3,
-        "customerId": 2,
-        "id": 7,
-        "status": "Admitted"
-    }
-]
+# ANIMALS = [
+#     {
+#         "id": 1,
+#         "name": "Peggy",
+#         "breed": "Pug",
+#         "customerId": 1,
+#         "locationId": 2,
+#         "status": "Admitted"
+#     },
+#     {
+#         "id": 2,
+#         "name": "Snippet",
+#         "breed": "Daschund",
+#         "customerId": 2,
+#         "locationId": 3,
+#         "status": "Admitted"
+#     },
+#     {
+#         "id": 3,
+#         "name": "Burrito",
+#         "breed": "Bulldog",
+#         "customerId": 3,
+#         "locationId": 4,
+#         "status": "Admitted"
+#     },
+#     {
+#         "id": 4,
+#         "name": "Bark",
+#         "breed": "Golden Retriever",
+#         "customerId": 4,
+#         "locationId": 5,
+#         "status": "Admitted"
+#     },
+#     {
+#         "id": 5,
+#         "name": "Gif",
+#         "breed": "Labador",
+#         "customerId": 5,
+#         "locationId": 6,
+#         "status": "Admitted"
+#     },
+#     {
+#         "id": 6,
+#         "name": "Bixo do Coco",
+#         "breed": "Chihuahua",
+#         "customerId": 1,
+#         "locationId": 2,
+#         "status": "Admitted"
+#     },
+#     {
+#         "name": "Pal",
+#         "breed": "Vicious teddy bear killer",
+#         "locationId": 3,
+#         "customerId": 2,
+#         "id": 7,
+#         "status": "Admitted"
+#     }
+# ]
 
 
 # def get_all_animals():
@@ -159,8 +159,8 @@ def get_all_animals():
             # exact order of the parameters defined in the
             # Animal class above.
             animal = Animal(row['id'], row['name'], row['breed'],
-                            row['status'], row['location_id'],
-                            row['customer_id'])
+                            row['status'],
+                            row['customer_id'], row['location_id'])
 
             animals.append(animal.__dict__)
 
@@ -193,7 +193,33 @@ def get_single_animal(id):
 
         # Create an animal instance from the current row
         animal = Animal(data['id'], data['name'], data['breed'],
-                        data['status'], data['location_id'],
-                        data['customer_id'])
+                        data['status'],
+                        data['customer_id'], data['location_id'])
 
         return json.dumps(animal.__dict__)
+
+
+def get_animals_by_location(location):
+    with sqlite3.connect("./kennel.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        SELECT
+            a.id,
+            a.name,
+            a.breed,
+            a.status,
+            a.customer_id
+        FROM animal a
+        WHERE a.location_id = ?
+        """, (location, ))
+
+        animals = []
+
+        data = db_cursor.fetchall()
+        for row in data:
+            animal = Animal(row['id'], row['name'], row['breed'],
+                            row['status'], row['customer_id'])
+            animals.append(animal.__dict__)
+        return json.dumps(animals)
