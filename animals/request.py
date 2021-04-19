@@ -159,8 +159,8 @@ def get_all_animals():
             # exact order of the parameters defined in the
             # Animal class above.
             animal = Animal(row['id'], row['name'], row['breed'],
-                            row['status'],
-                            row['customer_id'], row['location_id'])
+                            row['customer_id'], row['location_id'],
+                            row['status'])
 
             animals.append(animal.__dict__)
 
@@ -193,8 +193,8 @@ def get_single_animal(id):
 
         # Create an animal instance from the current row
         animal = Animal(data['id'], data['name'], data['breed'],
-                        data['status'],
-                        data['customer_id'], data['location_id'])
+                        data['customer_id'], data['location_id'],
+                        data['status'])
 
         return json.dumps(animal.__dict__)
 
@@ -220,6 +220,36 @@ def get_animals_by_location(location):
         data = db_cursor.fetchall()
         for row in data:
             animal = Animal(row['id'], row['name'], row['breed'],
-                            row['status'], row['customer_id'])
+                            row['customer_id'], row['status'])
             animals.append(animal.__dict__)
         return json.dumps(animals)
+
+
+def get_animals_by_status(status):
+    with sqlite3.connect("./kennel.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        SELECT
+            a.id,
+            a.name,
+            a.breed,
+            a.status,
+            a.location_id,
+            a.customer_id
+        FROM animal a
+        WHERE a.status = ?
+        """, (status, ))
+
+        animals = []
+
+        dataset = db_cursor.fetchall()
+
+        for row in dataset:
+            animal = Animal(row['id'], row['name'], row['breed'],
+                            row['customer_id'], row['location_id'])
+
+            animals.append(animal.__dict__)
+
+    return json.dumps(animals)
