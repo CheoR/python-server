@@ -217,7 +217,9 @@ def get_customers_by_email(email):
         select
             c.id,
             c.name,
-            c.address
+            c.address,
+            c.email,
+            c.password
         from customer c
         WHERE c.email = ?
         """, (email, ))
@@ -227,7 +229,7 @@ def get_customers_by_email(email):
 
         for row in dataset:
             customer = Customer(
-                row['id'], row['name'], row['address'])
+                row['id'], row['name'], row['address'], row['email'], row['password'])
             customers.append(customer.__dict__)
 
     return json.dumps(customers)
