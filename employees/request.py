@@ -4,64 +4,64 @@ import json
 from models import Employee
 
 
-EMPLOYEES = [
-    {
-        "id": 1,
-        "name": "Peggy",
-        "job": "Professional Dog Snuggles",
-        "locationId": 1,
-        "status": "Add status"
-    },
-    {
-        "id": 2,
-        "name": "Cat Lady",
-        "job": "Picks up cat poop",
-        "locationId": 1,
-        "status": "Add status"
-    },
-    {
-        "id": 3,
-        "name": "Mage",
-        "job": "Eats poop",
-        "locationId": 2,
-        "status": "Add status"
-    },
-    {
-        "id": 4,
-        "name": "Hobo Jack",
-        "job": "Doesn't actually work here, just hangs out here.",
-        "locationId": 2,
-        "status": "Add status"
-    },
-    {
-        "id": 5,
-        "name": "Drifter Jeff",
-        "job": "Hobo Jack's friend",
-        "locationId": 3,
-        "status": "Add status"
-    },
-    {
-        "id": 6,
-        "name": "Charlie",
-        "job": "Horse without a liver.",
-        "locationId": 3,
-        "status": "Add status"
-    },
-    {
-        "name": "Sunny",
-        "job": "Ray Of Happiness",
-        "locationId": 2,
-        "id": 7,
-        "status": "Add status"
-    },
-    {
-        "name": "mr delete",
-        "job": "deleting stuff",
-        "locationId": 2,
-        "id": 8,
-        "status": "Add status"
-    }
-]
+# EMPLOYEES = [
+#     {
+#         "id": 1,
+#         "name": "Peggy",
+#         "job": "Professional Dog Snuggles",
+#         "locationId": 1,
+#         "status": "Add status"
+#     },
+#     {
+#         "id": 2,
+#         "name": "Cat Lady",
+#         "job": "Picks up cat poop",
+#         "locationId": 1,
+#         "status": "Add status"
+#     },
+#     {
+#         "id": 3,
+#         "name": "Mage",
+#         "job": "Eats poop",
+#         "locationId": 2,
+#         "status": "Add status"
+#     },
+#     {
+#         "id": 4,
+#         "name": "Hobo Jack",
+#         "job": "Doesn't actually work here, just hangs out here.",
+#         "locationId": 2,
+#         "status": "Add status"
+#     },
+#     {
+#         "id": 5,
+#         "name": "Drifter Jeff",
+#         "job": "Hobo Jack's friend",
+#         "locationId": 3,
+#         "status": "Add status"
+#     },
+#     {
+#         "id": 6,
+#         "name": "Charlie",
+#         "job": "Horse without a liver.",
+#         "locationId": 3,
+#         "status": "Add status"
+#     },
+#     {
+#         "name": "Sunny",
+#         "job": "Ray Of Happiness",
+#         "locationId": 2,
+#         "id": 7,
+#         "status": "Add status"
+#     },
+#     {
+#         "name": "mr delete",
+#         "job": "deleting stuff",
+#         "locationId": 2,
+#         "id": 8,
+#         "status": "Add status"
+#     }
+# ]
 
 
 # def get_all_employees():
@@ -196,3 +196,30 @@ def get_single_employee(id):
                             data['address'], data['location_id'])
 
         return json.dumps(employee.__dict__)
+
+
+def get_employees_by_location(location):
+    with sqlite3.connect("./kennel.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        SELECT
+            e.id,
+            e.name,
+            e.address,
+            e.location_id
+        FROM employee e
+        WHERE e.location_id = ?
+        """, (location, ))
+
+        employees = []
+
+        dataset = db_cursor.fetchall()
+
+        for row in dataset:
+            employee = Employee(row['id'], row['name'],
+                                row['address'])
+            employees.append(employee.__dict__)
+
+    return json.dumps(employees)
