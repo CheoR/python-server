@@ -4,7 +4,7 @@ import json
 from animals import get_all_animals, get_single_animal, create_animal, delete_animal, update_animal
 from locations import get_all_locations, get_single_location, create_location, delete_location, update_location
 from employees import get_all_employees, get_single_employee, create_employee, delete_employee, update_employee
-from customers import get_all_customers, get_single_customer, create_customer, delete_customer, update_customer
+from customers import get_all_customers, get_single_customer, create_customer, delete_customer, update_customer, get_customers_by_email
 
 
 # Here's a class. It inherits from another class.
@@ -13,14 +13,13 @@ from customers import get_all_customers, get_single_customer, create_customer, d
 # common purpose is to respond to HTTP requests from a client.
 class HandleRequests(BaseHTTPRequestHandler):
 
-    # Here's a class function
     def _set_headers(self, status):
         self.send_response(status)
         self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
 
-    # Another method! This supports requests with the OPTIONS verb.
+    # This method supports requests with the OPTIONS verb.
     # Where you would set up CORS
     def do_OPTIONS(self):
         self.send_response(200)
@@ -31,42 +30,83 @@ class HandleRequests(BaseHTTPRequestHandler):
                          'X-Requested-With, Content-Type, Accept')
         self.end_headers()
 
-    # Here's a method on the class that overrides the parent's method.
+    # This method overrides the parent's method.
     # It handles any GET request.
+    # def do_GET(self):
+    #     # Set the response code to 'Ok'
+    #     self._set_headers(200)
+    #     response = {}  # Default response
+
+    #     # Parse the URL and capture the tuple that is returned
+    #     (resource, id) = self.parse_url(self.path)
+
+    #     request_with_id = {
+    #         "animals": get_single_animal,
+    #         "locations": get_single_location,
+    #         "employees": get_single_employee,
+    #         "customers": get_single_customer,
+    #     }
+
+    #     request_without_id = {
+    #         "animals": get_all_animals,
+    #         "locations": get_all_locations,
+    #         "employees": get_all_employees,
+    #         "customers": get_all_customers,
+    #     }
+
+    #     # .encode requires responses be string
+    #     if id is not None:
+    #         func = request_with_id[resource]
+    #         response = str(func(id))
+
+    #     else:
+    #         response = str(request_without_id[resource]())
+
+    #     self.wfile.write(response.encode())
+
     def do_GET(self):
         # Set the response code to 'Ok'
         self._set_headers(200)
-        response = {}  # Default response
 
-        # Parse the URL and capture the tuple that is returned
-        (resource, id) = self.parse_url(self.path)
+        response = {}
 
-        request_with_id = {
-            "animals": get_single_animal,
-            "locations": get_single_location,
-            "employees": get_single_employee,
-            "customers": get_single_customer,
-        }
+        # Parse URL and store entire tuple in a variable
+        parsed = self.parse_url(self.path)
 
-        request_without_id = {
-            "animals": get_all_animals,
-            "locations": get_all_locations,
-            "employees": get_all_employees,
-            "customers": get_all_customers,
-        }
+        # Response from parse_url() is a tuple with 2
+        # items in it, which means the request was for
+        # `/animals` or `/animals/2`
+        if len(parsed) == 2:
+            (resource, id) = parsed
 
-        # .encode requires responses be string
-        if id is not None:
-            func = request_with_id[resource]
-            response = str(func(id))
+            if resource == "animals":
+                if id is not None:
+                    response = f"{get_single_animal(id)}"
+                else:
+                    response = f"{get_all_animals()}"
+            elif resource == "customers":
+                if id is not None:
+                    response = f"{get_single_customer(id)}"
+                else:
+                    response = f"{get_all_customers()}"
 
-        else:
-            response = str(request_without_id[resource]())
+        # Response from parse_url() is a tuple with 3
+        # items in it, which means the request was for
+        # `/resource?parameter=value`
+        elif len(parsed) == 3:
+            (resource, key, value) = parsed
+
+            # Is the resource `customers` and was there a
+            # query parameter that specified the customer
+            # email as a filtering value?
+            if key == "email" and resource == "customers":
+                response = get_customers_by_email(value)
 
         self.wfile.write(response.encode())
 
-    # Here's a method on the class that overrides the parent's method.
+    # Overrides the parent's method.
     # It handles any POST request.
+
     def do_POST(self):
         # Set response code to 'Created'
         self._set_headers(201)
@@ -79,24 +119,23 @@ class HandleRequests(BaseHTTPRequestHandler):
         # Parse URL
         (resource, id) = self.parse_url(self.path)
 
-        # Initialize new animal
-        new_animal = None
+        # Initialize new object
+        new_object = None
 
-        # Add a new animal to the list.
-        select_create_obj = {
+        # Add a new object to the list.
+        create_obj = {
             "animals": create_animal,
             "locations": create_location,
             "employees": create_employee,
             "customers": create_customer
         }
 
-        func = select_create_obj[resource]
+        func = create_obj[resource]
         new_object = func(post_body)
 
         # Encode the new object and send in response
         self.wfile.write(f"{new_object}".encode())
 
-    # Here's a method on the class that overrides the parent's method.
     # It handles any PUT request.
     def do_PUT(self):
         # 204 - Successful request but no content to return.
@@ -131,16 +170,15 @@ class HandleRequests(BaseHTTPRequestHandler):
         # Parse the URL
         (resource, id) = self.parse_url(self.path)
 
-        # Delete a single animal from the list
+        # Delete a single object from the list
         # if resource == "animals":
-        # delete_animal(id)
-        select_delete_obj = {
+        delete_single_object = {
             "animals": delete_animal,
             "locations": delete_location,
             "employees": delete_employee,
             "customers": delete_customer
         }
-        func = select_delete_obj[resource]
+        func = delete_single_object[resource]
         func(id)
 
         # Encode the new animal and send in response
@@ -149,18 +187,34 @@ class HandleRequests(BaseHTTPRequestHandler):
     def parse_url(self, path):
         path_params = path.split("/")
         resource = path_params[1]
-        id = None
 
-        # get the item at index 2
-        try:
-            # use like parseInt()
-            id = int(path_params[2])
-        except IndexError:
-            pass  # No route parameter exists: /animals
-        except ValueError:
-            pass  # Request had trailing slash: /animals/
+        print(f"path: {path}")
+        print(f"path_params: {path_params}")
+        print(f"resource: {resource}")
+        # Check if there is a query string parameter
+        if "?" in resource:
+            # E.G.: /customers?email=jenna@solis.com
 
-        return (resource, id)
+            param = resource.split("?")[1]  # email=jenna@solis.com
+            resource = resource.split("?")[0]  # 'customers'
+            pair = param.split("=")  # [ 'email', 'jenna@solis.com' ]
+            key = pair[0]  # 'email'
+            value = pair[1]  # 'jenna@solis.com'
+
+            return (resource, key, value)
+
+        # No query string parameter
+        else:
+            id = None
+
+            try:
+                id = int(path_params[2])
+            except IndexError:
+                pass  # No route parameter exists: /animals
+            except ValueError:
+                pass  # Request had trailing slash: /animals/
+
+            return (resource, id)
 
 
 # This function is not inside the class. It is the starting
