@@ -149,26 +149,51 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.wfile.write(f"{new_object}".encode())
 
     # It handles any PUT request.
+    # def do_PUT(self):
+    #     # 204 - Successful request but no content to return.
+    #     self._set_headers(204)
+    #     content_len = int(self.headers.get('content-length', 0))
+
+    #     post_body = self.rfile.read(content_len)
+    #     post_body = json.loads(post_body)
+
+    #     # Parse URL
+    #     (resource, id) = self.parse_url(self.path)
+
+    #     update_obj = {
+    #         "animals": update_animal,
+    #         "locations": update_location,
+    #         "employees": update_employee,
+    #         "customers": update_customer
+    #     }
+
+    #     func = update_obj[resource]
+    #     func(id, post_body)
+
+    #     # Encode the new animal and send in response
+    #     self.wfile.write("".encode())
+
     def do_PUT(self):
-        # 204 - Successful request but no content to return.
-        self._set_headers(204)
         content_len = int(self.headers.get('content-length', 0))
 
         post_body = self.rfile.read(content_len)
         post_body = json.loads(post_body)
 
-        # Parse URL
+        # Parse the URL
         (resource, id) = self.parse_url(self.path)
 
-        update_obj = {
-            "animals": update_animal,
-            "locations": update_location,
-            "employees": update_employee,
-            "customers": update_customer
-        }
+        success = False
 
-        func = update_obj[resource]
-        func(id, post_body)
+        if resource == "animals":
+            success = update_animal(id, post_body)
+        # rest of the elif's
+
+        if success:
+            # 204 - Successful request but no content to return.
+            self._set_headers(204)
+        else:
+            # Something went wrong.
+            self._set_headers(404)
 
         # Encode the new animal and send in response
         self.wfile.write("".encode())
