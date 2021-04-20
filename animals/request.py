@@ -2,7 +2,7 @@ import sqlite3
 import json
 
 from models import Animal
-
+from models import Location
 
 # ANIMALS = [
 #     {
@@ -133,15 +133,23 @@ def get_all_animals():
         db_cursor = conn.cursor()
 
         # Write the SQL query to get the information you want
+        # In case instace, a JOIN query to embed location data
+        # into an animal instance.
         db_cursor.execute("""
-        SELECT
-            a.id,
-            a.name,
-            a.breed,
-            a.status,
-            a.location_id,
-            a.customer_id
-        FROM animal a
+            SELECT
+                a.id,
+                a.name,
+                a.breed,
+                a.status,
+                a.location_id,
+                a.customer_id,
+                l.id AS location_id,
+                l.name AS location_name,
+                l.address AS location_address,
+                l.status AS location_status
+            FROM Animal a
+            JOIN Location l
+            ON l.id = a.location_id
         """)
 
         # Initialize an empty list to hold all animal representations
@@ -162,6 +170,16 @@ def get_all_animals():
                             row['customer_id'], row['location_id'],
                             row['status'])
 
+            # Location instance from the current row
+            location = Location(row['location_id'], row['location_name'],
+                                row['location_address'], row['location_status'])
+
+            # Add the dictionary representation of the location to the animal
+            animal.location = location.__dict__
+            print("Anmcal object: ")
+            print(f"{animal}")
+            print(f"{animal.__dict__}")
+            # Add the dictionary representation of the animal to the list
             animals.append(animal.__dict__)
 
     # `json` package serializes list as JSON
