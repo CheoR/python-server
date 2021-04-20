@@ -146,11 +146,11 @@ def get_all_employees():
             e.location_id,
             l.id AS location_id,
             l.name AS location_name,
-            l.addresss AS location_address,
+            l.address AS location_address,
             l.status AS location_status
         FROM Employee e
         JOIN Location l
-        ON e.location_id = l.location_id
+        ON e.location_id = location_id
         """)
 
         # Initialize an empty list to hold all employee representations
@@ -175,7 +175,7 @@ def get_all_employees():
             employee.location = location.__dict__
             employees.append(employee.__dict__)
             print("employees object: ")
-            print(f"{employees.__dict__}")
+            print(f"{employee.__dict__}")
     # `json` package serializes list as JSON
     return json.dumps(employees)
 
