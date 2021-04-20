@@ -3,6 +3,8 @@ import json
 
 from models import Animal
 from models import Location
+from models import Customer
+
 
 # ANIMALS = [
 #     {
@@ -146,10 +148,15 @@ def get_all_animals():
                 l.id AS location_id,
                 l.name AS location_name,
                 l.address AS location_address,
-                l.status AS location_status
+                l.status AS location_status,
+                c.id As customer_id,
+                c.name As customer_name,
+                c.address As customer_address
             FROM Animal a
             JOIN Location l
             ON l.id = a.location_id
+            JOIN Customer c
+            ON c.id = a.customer_id
         """)
 
         # Initialize an empty list to hold all animal representations
@@ -174,10 +181,14 @@ def get_all_animals():
             location = Location(row['location_id'], row['location_name'],
                                 row['location_address'], row['location_status'])
 
+            customer = Customer(
+                row['customer_id'], row['customer_name'], row['customer_address'])
+
             # Add the dictionary representation of the location to the animal
             animal.location = location.__dict__
+            animal.customer = customer.__dict__
+
             print("Anmcal object: ")
-            print(f"{animal}")
             print(f"{animal.__dict__}")
             # Add the dictionary representation of the animal to the list
             animals.append(animal.__dict__)
