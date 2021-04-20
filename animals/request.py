@@ -188,8 +188,6 @@ def get_all_animals():
             animal.location = location.__dict__
             animal.customer = customer.__dict__
 
-            print("Anmcal object: ")
-            print(f"{animal.__dict__}")
             # Add the dictionary representation of the animal to the list
             animals.append(animal.__dict__)
 

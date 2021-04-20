@@ -2,7 +2,7 @@ import sqlite3
 import json
 
 from models import Employee
-
+from models import Location
 
 # EMPLOYEES = [
 #     {
@@ -143,8 +143,14 @@ def get_all_employees():
             e.id,
             e.name,
             e.address,
-            e.location_id
-        FROM employee e
+            e.location_id,
+            l.id AS location_id,
+            l.name AS location_name,
+            l.addresss AS location_address,
+            l.status AS location_status
+        FROM Employee e
+        JOIN Location l
+        ON e.location_id = l.location_id
         """)
 
         # Initialize an empty list to hold all employee representations
@@ -163,9 +169,13 @@ def get_all_employees():
             # Employee class above.
             employee = Employee(row['id'], row['name'],
                                 row['address'], row['location_id'])
+            location = Location(row['location_id'], row['location_name'],
+                                row['location_address'], row['location_status'])
 
+            employee.location = location.__dict__
             employees.append(employee.__dict__)
-
+            print("employees object: ")
+            print(f"{employees.__dict__}")
     # `json` package serializes list as JSON
     return json.dumps(employees)
 
